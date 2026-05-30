@@ -12,7 +12,6 @@ model = whisper.load_model("base")
 recognizer = sr.Recognizer()
 
 
-# Speak function
 def speak(text):
 
     print("Bot:", text)
@@ -32,7 +31,6 @@ while True:
 
     try:
 
-        # Use microphone
         with sr.Microphone() as source:
 
             print("\nListening...")
@@ -47,7 +45,6 @@ while True:
 
             print("Recognizing...")
 
-            # Save temporary audio
             with open("voice.wav", "wb") as f:
 
                 f.write(audio.get_wav_data())
@@ -61,8 +58,8 @@ while True:
 
         print("You said:", command)
 
-        # Commands
-        if "hello" in command:
+        # Greetings
+        if "hello" in command or "hi" in command:
 
             speak("Hello Pradeep")
 
@@ -70,19 +67,100 @@ while True:
 
             speak("I am doing great")
 
+        # Time
         elif "time" in command:
 
             current_time = datetime.now().strftime("%H:%M")
 
             speak("Current time is " + current_time)
 
+        # Date
         elif "date" in command:
 
             current_date = datetime.now().strftime("%d %B %Y")
 
             speak("Today's date is " + current_date)
 
-        elif "bye" in command or "exit" in command or "stop" in command:
+        # Read Memory
+        elif "what do you remember" in command:
+
+            try:
+
+                with open("memory.txt", "r") as f:
+
+                    data = f.read()
+
+                if data.strip():
+
+                    speak(data)
+
+                else:
+
+                    speak("I do not remember anything yet")
+
+            except:
+
+                speak("Memory file not found")
+
+        # Save Memory
+        elif "remember" in command:
+
+            data = command.replace("remember", "").strip()
+
+            if data == "":
+
+                speak("Please tell me what to remember")
+
+            else:
+
+                with open("memory.txt", "a") as f:
+
+                    f.write(data + "\n")
+
+                speak("I will remember that")
+
+        # Save Note
+        elif "take note" in command or "take a note" in command:
+
+            note = command.replace("take note", "")
+            note = note.replace("take a note", "")
+            note = note.strip()
+
+            if note == "":
+
+                speak("Please tell me what note to save")
+
+            else:
+
+                with open("notes.txt", "a") as f:
+
+                    f.write(note + "\n")
+
+                speak("Note saved")
+
+        # Show Notes
+        elif "show notes" in command:
+
+            try:
+
+                with open("notes.txt", "r") as f:
+
+                    notes = f.read()
+
+                if notes.strip():
+
+                    speak(notes)
+
+                else:
+
+                    speak("No notes found")
+
+            except:
+
+                speak("Notes file not found")
+
+        # Exit
+        elif "bye" in command or "goodbye" in command or "exit" in command or "stop" in command:
 
             speak("Goodbye Pradeep")
 
@@ -98,7 +176,7 @@ while True:
 
             print("Unknown command")
 
-        # Remove temp file
+        # Remove temporary audio file
         if os.path.exists("voice.wav"):
 
             os.remove("voice.wav")
