@@ -4,6 +4,8 @@ from playsound import playsound
 import whisper
 import os
 from datetime import datetime
+import webbrowser
+import subprocess
 
 # Load Whisper model
 model = whisper.load_model("base")
@@ -49,7 +51,6 @@ while True:
 
                 f.write(audio.get_wav_data())
 
-        # Whisper recognition
         result = model.transcribe("voice.wav")
 
         command = result["text"].lower().strip()
@@ -81,7 +82,7 @@ while True:
 
             speak("Today's date is " + current_date)
 
-        # Read Memory
+        # Memory Read
         elif "what do you remember" in command:
 
             try:
@@ -102,7 +103,7 @@ while True:
 
                 speak("Memory file not found")
 
-        # Save Memory
+        # Memory Save
         elif "remember" in command:
 
             data = command.replace("remember", "").strip()
@@ -119,7 +120,7 @@ while True:
 
                 speak("I will remember that")
 
-        # Save Note
+        # Notes Save
         elif "take note" in command or "take a note" in command:
 
             note = command.replace("take note", "")
@@ -138,7 +139,7 @@ while True:
 
                 speak("Note saved")
 
-        # Show Notes
+        # Notes Show
         elif "show notes" in command:
 
             try:
@@ -159,8 +160,51 @@ while True:
 
                 speak("Notes file not found")
 
+        # Apps
+        elif "open calculator" in command:
+
+            subprocess.Popen("calc.exe")
+
+            speak("Opening Calculator")
+
+        elif "open notepad" in command:
+
+            subprocess.Popen("notepad.exe")
+
+            speak("Opening Notepad")
+
+        elif "open paint" in command:
+
+            subprocess.Popen("mspaint.exe")
+
+            speak("Opening Paint")
+
+        # Websites
+        elif "open youtube" in command:
+
+            webbrowser.open("https://www.youtube.com")
+
+            speak("Opening YouTube")
+
+        elif "open google" in command:
+
+            webbrowser.open("https://www.google.com")
+
+            speak("Opening Google")
+
+        elif "open chat g p t" in command or "open chatgpt" in command:
+
+            webbrowser.open("https://chatgpt.com")
+
+            speak("Opening Chat GPT")
+
         # Exit
-        elif "bye" in command or "goodbye" in command or "exit" in command or "stop" in command:
+        elif (
+            "bye" in command
+            or "goodbye" in command
+            or "exit" in command
+            or "stop" in command
+        ):
 
             speak("Goodbye Pradeep")
 
@@ -176,7 +220,7 @@ while True:
 
             print("Unknown command")
 
-        # Remove temporary audio file
+        # Cleanup
         if os.path.exists("voice.wav"):
 
             os.remove("voice.wav")
