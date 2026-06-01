@@ -5,25 +5,37 @@ import whisper
 import wikipedia
 import webbrowser
 import os
+import time
+import subprocess
 from datetime import datetime
 
 # Load Whisper model
-model = whisper.load_model("tiny")
+model = whisper.load_model("medium")
 
 # Speech recognizer
 recognizer = sr.Recognizer()
 
 
 def speak(text):
+
     print("Bot:", text)
 
-    tts = gTTS(text=text, lang="en")
-    tts.save("voice.mp3")
+    try:
 
-    playsound("voice.mp3")
+        tts = gTTS(text=text, lang="en")
 
-    if os.path.exists("voice.mp3"):
-        os.remove("voice.mp3")
+        tts.save("voice.mp3")
+
+        playsound("voice.mp3")
+
+        time.sleep(1)
+
+        if os.path.exists("voice.mp3"):
+            os.remove("voice.mp3")
+
+    except Exception as e:
+
+        print("Speech Error:", e)
 
 
 print("===== Pradeep Voice Assistant Started =====")
@@ -38,19 +50,20 @@ while True:
 
             recognizer.adjust_for_ambient_noise(
                 source,
-                duration=1
+                duration=0.5
             )
 
             audio = recognizer.listen(
                 source,
                 timeout=5,
-                phrase_time_limit=5
+                phrase_time_limit=10
             )
 
             print("Recognizing...")
 
             with open("voice.wav", "wb") as f:
                 f.write(audio.get_wav_data())
+            print("Audio size:", len(audio.get_wav_data()))
 
         result = model.transcribe("voice.wav")
 
@@ -58,7 +71,8 @@ while True:
 
         command = command.replace(".", "")
         command = command.replace("!", "")
-
+        command = command.replace("?", "")
+        command = command.lower().strip()
         print("You said:", command)
 
         # HELLO
@@ -187,28 +201,34 @@ while True:
                     "Please tell me what to search"
                 )
 
-        # WIKIPEDIA
+        # WIKIPEDIA PERSON SEARCH
         elif command.startswith("who is"):
 
-            person = command.replace(
-                "who is",
-                ""
-            ).strip()
+            person = command.replace("who is", "").strip()
 
+            if not person:
+                speak("Please tell me who you want to know about")
+                continue
             try:
 
-                result = wikipedia.summary(
-                    person,
-                    sentences=2
-                )
+                search_results = wikipedia.search(person,results=5)
 
-                speak(result)
+                if search_results:
+
+                    result = wikipedia.summary(
+                        search_results[0],
+                        sentences=2
+                    )
+
+                    speak(result)
+
+                else:
+
+                    speak("Could not find information")
 
             except:
 
-                speak(
-                    "Could not find information"
-                )
+                speak("Could not find information")
 
         # OPEN YOUTUBE
         elif "youtube" in command:
@@ -228,16 +248,51 @@ while True:
 
             speak("Opening Google")
 
+        # OPEN NOTEPAD
+        elif "open notepad" in command:
+
+            subprocess.Popen("notepad.exe")
+
+            speak("Opening Notepad")
+
+        # OPEN CALCULATOR
+        elif "open calculator" in command:
+
+            subprocess.Popen("calc.exe")
+
+            speak("Opening Calculator")
+
+        # PLAY SONG ON YOUTUBE
+        elif command.startswith("play"):
+
+            song = command.replace(
+                "play",
+                ""
+            ).strip()
+
+            if song:
+
+                webbrowser.open(
+                    f"https://www.youtube.com/results?search_query={song}"
+                )
+
+                speak("Playing " + song)
+
+            else:
+
+                speak("Tell me what to play")
+
         # HELP
         elif "help" in command:
 
             speak(
-                "Available commands are hello, time, date, remember, take note, show notes, search, who is, google, youtube and bye"
+                "Available commands are hello, time, date, remember, show memory, take note, show notes, search, who is, open notepad, open calculator, play song, youtube, google and bye"
             )
 
         # EXIT
         elif (
             "bye" in command
+            or "goodbye" in command
             or "exit" in command
             or "stop" in command
         ):
@@ -251,9 +306,29 @@ while True:
 
             break
 
+        # GENERAL KNOWLEDGE FALLBACK
         else:
 
-            speak("I did not understand that")
+            try:
+
+                search_results = wikipedia.search(command)
+
+                if search_results:
+
+                    result = wikipedia.summary(
+                        search_results[0],
+                        sentences=2
+                    )
+
+                    speak(result)
+
+                else:
+
+                    speak("I could not find information")
+
+            except:
+
+                speak("I could not find information")
 
         if os.path.exists("voice.wav"):
             os.remove("voice.wav")
@@ -269,5 +344,6 @@ while True:
         break
 
     except Exception as e:
-
+        if os.path.exists("voice.wav"):
+            os.remove("voice.wav")
         print("Error:", e)
