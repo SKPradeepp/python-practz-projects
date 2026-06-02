@@ -2,7 +2,7 @@ import speech_recognition as sr
 from gtts import gTTS
 from playsound import playsound
 import whisper
-import wikipedia
+import ollama
 import webbrowser
 import os
 import time
@@ -22,23 +22,55 @@ def speak(text):
 
     try:
 
+        filename = f"voice_{int(time.time())}.mp3"
+
         tts = gTTS(text=text, lang="en")
 
-        tts.save("voice.mp3")
+        tts.save(filename)
 
-        playsound("voice.mp3")
+        playsound(filename)
 
-        time.sleep(1)
+        time.sleep(0.5)
 
-        if os.path.exists("voice.mp3"):
-            os.remove("voice.mp3")
+        if os.path.exists(filename):
+            os.remove(filename)
 
     except Exception as e:
 
         print("Speech Error:", e)
 
 
+def ask_ai(question):
+
+    try:
+
+        response = ollama.chat(
+            model="llama3.2",
+            messages=[
+                {
+                    "role": "system",
+                    "content":
+                    "You are Pradeepp's personal voice assistant. Give short and useful spoken answers."
+                },
+                {
+                    "role": "user",
+                    "content": question
+                }
+            ]
+        )
+
+        return response["message"]["content"]
+
+    except Exception as e:
+
+        print("AI Error:", e)
+
+        return "Sorry, I cannot connect to the AI model."
+
+
 print("===== Pradeep Voice Assistant Started =====")
+
+speak("Voice assistant started")
 
 while True:
 
@@ -63,7 +95,6 @@ while True:
 
             with open("voice.wav", "wb") as f:
                 f.write(audio.get_wav_data())
-            print("Audio size:", len(audio.get_wav_data()))
 
         result = model.transcribe("voice.wav")
 
@@ -72,8 +103,11 @@ while True:
         command = command.replace(".", "")
         command = command.replace("!", "")
         command = command.replace("?", "")
-        command = command.lower().strip()
+
         print("You said:", command)
+
+        if command == "":
+            continue
 
         # HELLO
         if "hello" in command or "hi" in command:
@@ -109,7 +143,7 @@ while True:
 
             if data:
 
-                with open("memory.txt", "a") as f:
+                with open("memory.txt", "a", encoding="utf-8") as f:
                     f.write(data + "\n")
 
                 speak("I will remember that")
@@ -123,16 +157,21 @@ while True:
 
             try:
 
-                with open("memory.txt", "r") as f:
-                    data = f.read()
+                with open(
+                    "memory.txt",
+                    "r",
+                    encoding="utf-8"
+                ) as f:
 
-                if data.strip():
+                    memory = f.read()
 
-                    speak(data)
+                if memory.strip():
+
+                    speak(memory[:500])
 
                 else:
 
-                    speak("I do not remember anything yet")
+                    speak("I do not remember anything")
 
             except:
 
@@ -148,7 +187,12 @@ while True:
 
             if note:
 
-                with open("notes.txt", "a") as f:
+                with open(
+                    "notes.txt",
+                    "a",
+                    encoding="utf-8"
+                ) as f:
+
                     f.write(note + "\n")
 
                 speak("Note saved")
@@ -162,12 +206,17 @@ while True:
 
             try:
 
-                with open("notes.txt", "r") as f:
+                with open(
+                    "notes.txt",
+                    "r",
+                    encoding="utf-8"
+                ) as f:
+
                     notes = f.read()
 
                 if notes.strip():
 
-                    speak(notes)
+                    speak(notes[:500])
 
                 else:
 
@@ -191,56 +240,10 @@ while True:
                     f"https://www.google.com/search?q={query}"
                 )
 
-                speak(
-                    "Searching Google for " + query
-                )
-
-            else:
-
-                speak(
-                    "Please tell me what to search"
-                )
-
-        # WIKIPEDIA PERSON SEARCH
-        elif command.startswith("who is"):
-
-            person = command.replace("who is", "").strip()
-
-            if not person:
-                speak("Please tell me who you want to know about")
-                continue
-            try:
-
-                search_results = wikipedia.search(person,results=5)
-
-                if search_results:
-
-                    result = wikipedia.summary(
-                        search_results[0],
-                        sentences=2
-                    )
-
-                    speak(result)
-
-                else:
-
-                    speak("Could not find information")
-
-            except:
-
-                speak("Could not find information")
-
-        # OPEN YOUTUBE
-        elif "youtube" in command:
-
-            webbrowser.open(
-                "https://www.youtube.com"
-            )
-
-            speak("Opening YouTube")
+                speak("Searching Google for " + query)
 
         # OPEN GOOGLE
-        elif "google" in command:
+        elif "open google" in command:
 
             webbrowser.open(
                 "https://www.google.com"
@@ -248,21 +251,16 @@ while True:
 
             speak("Opening Google")
 
-        # OPEN NOTEPAD
-        elif "open notepad" in command:
+        # OPEN YOUTUBE
+        elif "open youtube" in command:
 
-            subprocess.Popen("notepad.exe")
+            webbrowser.open(
+                "https://www.youtube.com"
+            )
 
-            speak("Opening Notepad")
+            speak("Opening YouTube")
 
-        # OPEN CALCULATOR
-        elif "open calculator" in command:
-
-            subprocess.Popen("calc.exe")
-
-            speak("Opening Calculator")
-
-        # PLAY SONG ON YOUTUBE
+        # PLAY SONG
         elif command.startswith("play"):
 
             song = command.replace(
@@ -278,15 +276,49 @@ while True:
 
                 speak("Playing " + song)
 
-            else:
+        # OPEN NOTEPAD
+        elif "open notepad" in command:
 
-                speak("Tell me what to play")
+            subprocess.Popen("notepad.exe")
+
+            speak("Opening Notepad")
+
+        # OPEN CALCULATOR
+        elif "open calculator" in command:
+
+            subprocess.Popen("calc.exe")
+
+            speak("Opening Calculator")
+
+        # OPEN VS CODE
+        elif "open vs code" in command:
+
+            try:
+
+                subprocess.Popen(
+                    r"C:\Users\Pradeepp\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+                )
+
+                speak("Opening Visual Studio Code")
+
+            except:
+
+                speak("VS Code not found")
+
+        # OPEN WHATSAPP
+        elif "open whatsapp" in command:
+
+            webbrowser.open(
+                "https://web.whatsapp.com"
+            )
+
+            speak("Opening WhatsApp")
 
         # HELP
         elif "help" in command:
 
             speak(
-                "Available commands are hello, time, date, remember, show memory, take note, show notes, search, who is, open notepad, open calculator, play song, youtube, google and bye"
+                "You can ask me anything, open apps, search Google, save notes, remember things, play songs and more."
             )
 
         # EXIT
@@ -299,38 +331,21 @@ while True:
 
             speak("Goodbye Pradeepp")
 
-            print("Assistant stopped.")
-
-            if os.path.exists("voice.wav"):
-                os.remove("voice.wav")
+            print("Assistant stopped")
 
             break
 
-        # GENERAL KNOWLEDGE FALLBACK
+        # AI MODE
         else:
 
-            try:
+            answer = ask_ai(command)
 
-                search_results = wikipedia.search(command)
+            print("\nAI:", answer)
 
-                if search_results:
-
-                    result = wikipedia.summary(
-                        search_results[0],
-                        sentences=2
-                    )
-
-                    speak(result)
-
-                else:
-
-                    speak("I could not find information")
-
-            except:
-
-                speak("I could not find information")
+            speak(answer[:700])
 
         if os.path.exists("voice.wav"):
+
             os.remove("voice.wav")
 
     except sr.WaitTimeoutError:
@@ -344,6 +359,8 @@ while True:
         break
 
     except Exception as e:
+
+        print("Error:", e)
+
         if os.path.exists("voice.wav"):
             os.remove("voice.wav")
-        print("Error:", e)
