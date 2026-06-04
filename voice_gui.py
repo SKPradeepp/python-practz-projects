@@ -1,163 +1,194 @@
-import tkinter as tk
-from tkinter import scrolledtext
-from datetime import datetime
+import speech_recognition as sr
+from gtts import gTTS
+from playsound import playsound
+import whisper
 import ollama
+import os
+import time
+from datetime import datetime
 
-def add_message(sender, message):
-    chat_box.insert(tk.END, f"{sender}: {message}\n\n")
-    chat_box.see(tk.END)
+# Load Whisper model
+model = whisper.load_model("medium")
+
+# Speech recognizer
+recognizer = sr.Recognizer()
+
+# Chat memory
+chat_history = [
+    {
+        "role": "system",
+        "content": "You are Pradeepp's friendly AI voice assistant. Give concise and helpful answers."
+    }
+]
 
 
-def start_assistant():
+def speak(text):
 
-    status_label.config(text="Assistant Running")
+    print("Bot:", text)
 
-    add_message("System", "Assistant Started")
+    try:
 
+        filename = f"voice_{int(time.time())}.mp3"
 
-def stop_assistant():
+        tts = gTTS(text=text, lang="en")
 
-    status_label.config(text="Assistant Stopped")
+        tts.save(filename)
 
-    add_message("System", "Assistant Stopped")
+        playsound(filename)
+
+        time.sleep(0.5)
+
+        if os.path.exists(filename):
+            os.remove(filename)
+
+    except Exception as e:
+
+        print("Speech Error:", e)
+
 
 def ask_ai(prompt):
 
     try:
 
-        response = ollama.chat(
-            model="llama3.2",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
+        chat_history.append(
+            {
+                "role": "user",
+                "content": prompt
+            }
         )
 
-        return response["message"]["content"]
+        response = ollama.chat(
+            model="llama3.2",
+            messages=chat_history
+        )
+
+        answer = response["message"]["content"]
+
+        chat_history.append(
+            {
+                "role": "assistant",
+                "content": answer
+            }
+        )
+
+        # Keep only recent conversation
+        if len(chat_history) > 12:
+            del chat_history[1:3]
+
+        return answer
 
     except Exception as e:
 
-        return "Sorry, I could not connect to Ollama"
-    
+        print("Ollama Error:", e)
 
-def send_text():
-
-    user_text = entry.get().strip()
-
-    if not user_text:
-        return
-
-    add_message("You", user_text)
-
-    entry.delete(0, tk.END)
-
-    if "hello" in user_text.lower():
-
-        reply = "Hello Pradeepp"
-
-    elif "time" in user_text.lower():
-
-        reply = "Current time is " + datetime.now().strftime("%H:%M")
-
-    elif "date" in user_text.lower():
-
-        reply = "Today's date is " + datetime.now().strftime("%d %B %Y")
-
-    else:
-
-        reply = ask_ai(user_text)
-
-    add_message("Bot", reply)
+        return "Sorry, I cannot connect to Ollama."
 
 
-# Main Window
-root = tk.Tk()
+print("===== Pradeepp AI Assistant Started =====")
 
-root.title("Pradeepp AI Assistant")
+speak("Assistant started")
 
-root.geometry("800x600")
+while True:
 
+    try:
 
-# Title
-title_label = tk.Label(
-    root,
-    text="Pradeepp AI Assistant",
-    font=("Arial", 18, "bold")
-)
+        with sr.Microphone() as source:
 
-title_label.pack(pady=10)
+            print("\nListening...")
 
+            recognizer.adjust_for_ambient_noise(
+                source,
+                duration=0.5
+            )
 
-# Status
-status_label = tk.Label(
-    root,
-    text="Assistant Stopped",
-    font=("Arial", 12)
-)
+            audio = recognizer.listen(
+                source,
+                timeout=5,
+                phrase_time_limit=10
+            )
 
-status_label.pack()
+        print("Recognizing...")
 
+        with open("voice.wav", "wb") as f:
+            f.write(audio.get_wav_data())
 
-# Chat Area
-chat_box = scrolledtext.ScrolledText(
-    root,
-    wrap=tk.WORD,
-    width=80,
-    height=25
-)
+        result = model.transcribe("voice.wav")
 
-chat_box.pack(padx=10, pady=10, fill="both", expand=True)
+        command = result["text"].lower().strip()
 
+        command = (
+            command.replace(".", "")
+                   .replace("!", "")
+                   .replace("?", "")
+                   .strip()
+        )
 
-# Input Frame
-input_frame = tk.Frame(root)
+        print("You said:", command)
 
-input_frame.pack(fill="x", padx=10, pady=5)
+        if not command:
 
+            continue
 
-entry = tk.Entry(
-    input_frame,
-    font=("Arial", 12)
-)
+        # EXIT
+        if (
+            "bye" in command
+            or "goodbye" in command
+            or "exit" in command
+            or "stop" in command
+        ):
 
-entry.pack(side="left", fill="x", expand=True)
+            speak("Goodbye Pradeepp")
 
+            break
 
-send_button = tk.Button(
-    input_frame,
-    text="Send",
-    command=send_text
-)
+        # HELLO
+        elif "hello" in command or "hi" in command:
 
-send_button.pack(side="left", padx=5)
+            speak("Hello Pradeepp. How can I help you?")
 
+        # TIME
+        elif "time" in command:
 
-# Buttons
-button_frame = tk.Frame(root)
+            current_time = datetime.now().strftime("%H:%M")
 
-button_frame.pack(pady=10)
+            speak(f"The current time is {current_time}")
 
+        # DATE
+        elif "date" in command:
 
-start_button = tk.Button(
-    button_frame,
-    text="Start Assistant",
-    width=20,
-    command=start_assistant
-)
+            current_date = datetime.now().strftime("%d %B %Y")
 
-start_button.pack(side="left", padx=5)
+            speak(f"Today's date is {current_date}")
 
+        # EVERYTHING ELSE → OLLAMA
+        else:
 
-stop_button = tk.Button(
-    button_frame,
-    text="Stop Assistant",
-    width=20,
-    command=stop_assistant
-)
+            answer = ask_ai(command)
 
-stop_button.pack(side="left", padx=5)
+            print("\nAI Response:\n")
 
+            print(answer)
 
-root.mainloop()
+            speak(answer[:500])
+
+        if os.path.exists("voice.wav"):
+
+            os.remove("voice.wav")
+
+    except sr.WaitTimeoutError:
+
+        print("No speech detected")
+
+    except KeyboardInterrupt:
+
+        print("\nAssistant closed manually")
+
+        break
+
+    except Exception as e:
+
+        print("Error:", e)
+
+        if os.path.exists("voice.wav"):
+
+            os.remove("voice.wav")
