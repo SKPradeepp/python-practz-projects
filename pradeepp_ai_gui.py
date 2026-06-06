@@ -8,6 +8,9 @@ from gtts import gTTS
 from playsound import playsound
 import os
 import time
+import subprocess
+import webbrowser
+from datetime import datetime
 
 # =========================
 # LOAD MODELS
@@ -54,10 +57,6 @@ def speak(text):
 
         print("Speech Error:", e)
 
-# =========================
-# AI RESPONSE
-# =========================
-
 def ask_ai(message):
 
     try:
@@ -89,27 +88,42 @@ def ask_ai(message):
 
         return f"Error: {e}"
 
+def save_chat(sender, message):
+
+    with open(
+        "chat_history.txt",
+        "a",
+        encoding="utf-8"
+    ) as f:
+
+        time_now = datetime.now().strftime(
+            "%d-%m-%Y %H:%M:%S"
+        )
+
+        f.write(
+            f"[{time_now}] {sender}: {message}\n"
+        )
 # =========================
 # SEND MESSAGE
 # =========================
 
 def send_message():
 
-    user_message = entry.get().strip()
+    message = entry.get().strip()
 
-    if not user_message:
+    if message == "":
         return
 
     chat_box.insert(
         tk.END,
-        f"You: {user_message}\n\n"
+        f"You: {message}\n\n"
     )
 
     chat_box.see(tk.END)
 
     entry.delete(0, tk.END)
 
-    answer = ask_ai(user_message)
+    answer = ask_ai(message)
 
     chat_box.insert(
         tk.END,
@@ -118,11 +132,7 @@ def send_message():
 
     chat_box.see(tk.END)
 
-    threading.Thread(
-        target=speak,
-        args=(answer,),
-        daemon=True
-    ).start()
+    save_chat("Bot", answer)
 
 # =========================
 # VOICE INPUT
@@ -180,6 +190,7 @@ def listen_voice():
             f"Bot: {answer}\n\n"
         )
 
+        save_chat("Bot", answer)
         chat_box.see(tk.END)
 
         speak(answer)
@@ -283,5 +294,22 @@ chat_box.insert(
     tk.END,
     "System: Assistant Ready\n\n"
 )
+entry.bind(
+    "<Return>",
+    lambda event: send_message()
+)
 
+root.configure(bg="#1e1e1e")
+
+chat_box.configure(
+    bg="#252526",
+    fg="white",
+    insertbackground="white"
+)
+
+entry.configure(
+    bg="#3c3c3c",
+    fg="white",
+    insertbackground="white"
+)
 root.mainloop()
