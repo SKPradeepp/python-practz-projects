@@ -103,6 +103,96 @@ def save_chat(sender, message):
         f.write(
             f"[{time_now}] {sender}: {message}\n"
         )
+def execute_command(command):
+
+    command = command.lower()
+
+    # Calculator
+    if "open calculator" in command:
+
+        subprocess.Popen("calc.exe")
+
+        return "Opening Calculator"
+
+    # Notepad
+    elif "open notepad" in command:
+
+        subprocess.Popen("notepad.exe")
+
+        return "Opening Notepad"
+
+    # Paint
+    elif "open paint" in command:
+
+        subprocess.Popen("mspaint.exe")
+
+        return "Opening Paint"
+
+    # CMD
+    elif "open cmd" in command:
+
+        subprocess.Popen("cmd.exe")
+
+        return "Opening Command Prompt"
+
+    # VS Code
+    elif "open vs code" in command or "open vscode" in command:
+
+        subprocess.Popen("code")
+
+        return "Opening VS Code"
+
+    # Google
+    elif "open google" in command:
+
+        webbrowser.open("https://www.google.com")
+
+        return "Opening Google"
+
+    # YouTube
+    elif "open youtube" in command:
+
+        webbrowser.open("https://www.youtube.com")
+
+        return "Opening YouTube"
+
+    # GitHub
+    elif "open github" in command:
+
+        webbrowser.open("https://github.com")
+
+        return "Opening GitHub"
+
+    # Gmail
+    elif "open gmail" in command:
+
+        webbrowser.open("https://mail.google.com")
+
+        return "Opening Gmail"
+
+    # Google Search
+    elif command.startswith("search "):
+
+        query = command.replace("search", "").strip()
+
+        webbrowser.open(
+            f"https://www.google.com/search?q={query}"
+        )
+
+        return f"Searching Google for {query}"
+
+    # YouTube Search
+    elif command.startswith("play "):
+
+        song = command.replace("play", "").strip()
+
+        webbrowser.open(
+            f"https://www.youtube.com/results?search_query={song}"
+        )
+
+        return f"Playing {song}"
+
+    return None
 # =========================
 # SEND MESSAGE
 # =========================
@@ -113,7 +203,7 @@ def send_message():
 
     if message == "":
         return
-
+    save_chat("You", message)
     chat_box.insert(
         tk.END,
         f"You: {message}\n\n"
@@ -123,7 +213,11 @@ def send_message():
 
     entry.delete(0, tk.END)
 
-    answer = ask_ai(message)
+    answer = execute_command(message)
+
+    if answer is None:
+
+        answer = ask_ai(message)
 
     chat_box.insert(
         tk.END,
@@ -133,6 +227,15 @@ def send_message():
     chat_box.see(tk.END)
 
     save_chat("Bot", answer)
+    threading.Thread(
+        target=speak,
+        args=(answer,),
+        daemon=True
+    ).start()
+    if message.lower() in ["bye", "exit", "quit"]:
+        speak("Goodbye Pradeepp")
+    root.destroy()
+    return
 
 # =========================
 # VOICE INPUT
@@ -142,10 +245,15 @@ def listen_voice():
 
     try:
 
+        status_label.config(
+            text="Listening..."
+        )
+
         chat_box.insert(
             tk.END,
             "System: Listening...\n\n"
         )
+        save_chat("You", command)
 
         chat_box.see(tk.END)
 
@@ -183,7 +291,11 @@ def listen_voice():
 
         chat_box.see(tk.END)
 
-        answer = ask_ai(command)
+        answer = execute_command(command)
+
+        if answer is None:
+
+            answer = ask_ai(command)
 
         chat_box.insert(
             tk.END,
@@ -194,6 +306,10 @@ def listen_voice():
         chat_box.see(tk.END)
 
         speak(answer)
+        if command.lower() in ["bye", "exit", "quit"]:
+            speak("Goodbye Pradeepp")
+        root.destroy()
+        return
 
     except Exception as e:
 
@@ -289,7 +405,17 @@ mic_button.pack(
     side="left",
     padx=5
 )
+clear_button = tk.Button(
+    bottom_frame,
+    text="Clear",
+    command=lambda: chat_box.delete("1.0", tk.END),
+    width=10
+)
 
+clear_button.pack(
+    side="left",
+    padx=5
+)
 chat_box.insert(
     tk.END,
     "System: Assistant Ready\n\n"
@@ -312,4 +438,12 @@ entry.configure(
     fg="white",
     insertbackground="white"
 )
+status_label = tk.Label(
+    root,
+    text="Ready",
+    bg="#1e1e1e",
+    fg="lightgreen",
+    font=("Arial", 10)
+)
+status_label.pack(pady=5)
 root.mainloop()
