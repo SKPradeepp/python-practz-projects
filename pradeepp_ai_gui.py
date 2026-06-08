@@ -11,6 +11,7 @@ import time
 import subprocess
 import webbrowser
 from datetime import datetime
+import wikipedia
 
 # =========================
 # LOAD MODELS
@@ -56,6 +57,49 @@ def speak(text):
     except Exception as e:
 
         print("Speech Error:", e)
+def search_wikipedia(query):
+
+    try:
+
+        results = wikipedia.search(
+            query,
+            results=5
+        )
+
+        if not results:
+
+            return None
+
+        summary = wikipedia.summary(
+            results[0],
+            sentences=3
+        )
+
+        return summary
+
+    except Exception:
+
+        return None
+def is_fact_question(message):
+
+    message = message.lower()
+
+    fact_starters = [
+
+        "who is",
+        "what is",
+        "where is",
+        "when was",
+        "when is",
+        "tell me about",
+        "define"
+
+    ]
+
+    return any(
+        message.startswith(x)
+        for x in fact_starters
+    )
 
 def ask_ai(message):
 
@@ -217,7 +261,11 @@ def send_message():
 
     if answer is None:
 
-        answer = ask_ai(message)
+        if is_fact_question(message):
+            answer = search_wikipedia(message)
+
+        if answer is None:
+            answer = ask_ai(message)
 
     chat_box.insert(
         tk.END,
@@ -234,8 +282,8 @@ def send_message():
     ).start()
     if message.lower() in ["bye", "exit", "quit"]:
         speak("Goodbye Pradeepp")
-    root.destroy()
-    return
+        root.destroy()
+        return
 
 # =========================
 # VOICE INPUT
@@ -253,7 +301,6 @@ def listen_voice():
             tk.END,
             "System: Listening...\n\n"
         )
-        save_chat("You", command)
 
         chat_box.see(tk.END)
 
@@ -279,7 +326,7 @@ def listen_voice():
         )
 
         command = result["text"].strip()
-
+        save_chat("You", command)
         if os.path.exists("voice.wav"):
 
             os.remove("voice.wav")
@@ -295,7 +342,11 @@ def listen_voice():
 
         if answer is None:
 
-            answer = ask_ai(command)
+            if is_fact_question(command):
+                answer = search_wikipedia(command)
+
+            if answer is None:
+                answer = ask_ai(command)
 
         chat_box.insert(
             tk.END,
@@ -305,11 +356,11 @@ def listen_voice():
         save_chat("Bot", answer)
         chat_box.see(tk.END)
 
-        speak(answer)
         if command.lower() in ["bye", "exit", "quit"]:
             speak("Goodbye Pradeepp")
-        root.destroy()
-        return
+            root.destroy()
+            return
+        speak(answer)
 
     except Exception as e:
 
