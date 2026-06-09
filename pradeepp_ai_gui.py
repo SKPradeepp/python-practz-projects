@@ -1,4 +1,6 @@
 import tkinter as tk
+import pyautogui
+import psutil
 from tkinter import scrolledtext
 import threading
 import speech_recognition as sr
@@ -157,6 +159,43 @@ def execute_command(command):
         subprocess.Popen("calc.exe")
 
         return "Opening Calculator"
+    elif "take screenshot" in command:
+
+        if not os.path.exists("screenshots"):
+            os.mkdir("screenshots")
+
+        filename = os.path.join(
+            "screenshots",
+            datetime.now().strftime(
+            "screenshot_%Y%m%d_%H%M%S.png"
+            )
+        )
+
+        pyautogui.screenshot().save(filename)
+
+        return "Screenshot saved successfully"
+    
+    elif "cpu usage" in command:
+
+        cpu = psutil.cpu_percent(interval=1)
+
+        return f"CPU usage is {cpu} percent"
+    
+    elif "ram usage" in command:
+
+        ram = psutil.virtual_memory()
+
+        return f"RAM usage is {ram.percent} percent"
+
+    elif "battery status" in command or command == "battery":
+
+        battery = psutil.sensors_battery()
+
+        if battery:
+
+            return f"Battery is {battery.percent} percent"
+
+        return "Battery information unavailable"
 
     # Notepad
     elif "open notepad" in command:
@@ -185,6 +224,45 @@ def execute_command(command):
         subprocess.Popen("code")
 
         return "Opening VS Code"
+    
+    elif "open desktop" in command:
+
+        desktop = os.path.join(
+        os.path.expanduser("~"),
+        "Desktop"
+        )
+
+        if not os.path.exists(desktop):
+
+            desktop = os.path.join(
+            os.path.expanduser("~"),
+            "OneDrive",
+            "Desktop"
+            )
+
+        os.startfile(desktop)
+
+        return "Opening Desktop"
+    
+    elif "open downloads" in command:
+
+        downloads = os.path.join(
+            os.path.expanduser("~"),
+            "Downloads"
+        )
+
+
+        if not os.path.exists(downloads):
+
+            downloads = os.path.join(
+                os.path.expanduser("~"),
+                "OneDrive",
+                "Downloads"
+            )
+
+        os.startfile(downloads)
+
+        return "Opening Downloads"
 
     # Google
     elif "open google" in command:
@@ -237,6 +315,7 @@ def execute_command(command):
         return f"Playing {song}"
 
     return None
+
 # =========================
 # SEND MESSAGE
 # =========================
@@ -275,15 +354,17 @@ def send_message():
     chat_box.see(tk.END)
 
     save_chat("Bot", answer)
-    threading.Thread(
-        target=speak,
-        args=(answer,),
-        daemon=True
-    ).start()
+    
     if message.lower() in ["bye", "exit", "quit"]:
         speak("Goodbye Pradeepp")
         root.destroy()
         return
+
+    threading.Thread(
+    target=speak,
+    args=(answer,),
+    daemon=True
+    ).start()
 
 # =========================
 # VOICE INPUT
@@ -360,7 +441,12 @@ def listen_voice():
             speak("Goodbye Pradeepp")
             root.destroy()
             return
-        speak(answer)
+        status_label.config(text="Ready")
+        threading.Thread(
+        target=speak,
+        args=(answer,),
+        daemon=True
+        ).start()
 
     except Exception as e:
 

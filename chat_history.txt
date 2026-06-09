@@ -131,3 +131,32 @@ And the other films that are actually part of his credits are:
 * Chettinad Diaries
 [07-06-2026 18:47:06] You: open youtube
 [07-06-2026 18:47:07] Bot: Opening YouTube
+[08-06-2026 14:31:37] You: who is dhoni
+[08-06-2026 14:32:15] Bot: MS Dhoni!
+
+M.S. Dhoni (born July 7, 1975) is a former Indian international cricketer who is widely regarded as one of the greatest wicket-keeper batsmen in the history of cricket.
+
+He is best known for his incredible leadership skills and his ability to read the game exceptionally well. Dhoni was born in Ranchi, Jharkhand, India, and began playing cricket at a young age. He rose through the ranks of Indian cricket, eventually becoming the captain of the Indian national team.
+
+Some of his most notable achievements include:
+
+1. **World Cup winner**: In 2011, Dhoni led India to its first-ever ICC Cricket World Cup victory.
+2. **One-Day International (ODI) record holder**: He holds the record for the fastest half-century in ODI history, which he achieved in just 21 balls against Sri Lanka in 2005.
+3. **Test cricket record breaker**: In 2010, Dhoni became the first wicket-keeper batsman to score a century and take three wickets in an innings in Test cricket.
+
+Dhoni's impact on Indian cricket goes beyond his on-field achievements. He is widely credited with helping to popularize cricket in India, particularly among the youth. His humility, work ethic, and commitment to grassroots development have made him a beloved figure in Indian sports.
+
+After retiring from international cricket in 2019, Dhoni remains involved in the sport as a coach and mentor, inspiring a new generation of cricketers in India and beyond!
+[08-06-2026 14:32:29] You: k bye
+[08-06-2026 14:32:33] Bot: It was nice chatting with you about MS Dhoni. If you have any more questions or topics you'd like to discuss, feel free to come back anytime!
+
+Have a great day!
+[09-06-2026 14:01:33] You: open google
+[09-06-2026 14:01:34] Bot: Opening Google
+[09-06-2026 14:01:53] You: battery
+[09-06-2026 14:01:53] Bot: Battery is 64 percent
+[09-06-2026 14:02:10] You: open desktop
+[09-06-2026 14:20:05] You: open desktop
+[09-06-2026 14:20:05] Bot: Opening Desktop
+[09-06-2026 14:20:15] You: k bye
+[09-06-2026 14:20:26] Bot: Bye for now! It was nice chatting with you, even if it was just a quick goodbye. Feel free to come back and talk to me anytime you'd like. Have a great day!
