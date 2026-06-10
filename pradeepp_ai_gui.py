@@ -1,5 +1,6 @@
 import tkinter as tk
 import pyautogui
+import requests
 import psutil
 from tkinter import scrolledtext
 import threading
@@ -14,7 +15,7 @@ import subprocess
 import webbrowser
 from datetime import datetime
 import wikipedia
-
+API_KEY = "xxxxxxxxxxxxxxxx"
 # =========================
 # LOAD MODELS
 # =========================
@@ -103,6 +104,23 @@ def is_fact_question(message):
         for x in fact_starters
     )
 
+def volume_control(action):
+
+    if action == "mute":
+        pyautogui.press("volumemute")
+        return "Muted"
+
+    elif action == "up":
+        pyautogui.press("volumeup")
+        return "Volume increased"
+
+    elif action == "down":
+        pyautogui.press("volumedown")
+        return "Volume decreased"
+    elif action == "unmute":
+        pyautogui.press("volumemute")
+        return "Unmuted"
+    
 def ask_ai(message):
 
     try:
@@ -149,6 +167,29 @@ def save_chat(sender, message):
         f.write(
             f"[{time_now}] {sender}: {message}\n"
         )
+
+def get_weather(city):
+
+    try:
+
+        url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+
+        response = requests.get(url)
+
+        data = response.json()
+
+        if data.get("cod") != 200:
+            return f"Weather Error: {data.get('message')}"
+
+        temp = data["main"]["temp"]
+        desc = data["weather"][0]["description"]
+
+        return f"{city}: {temp}°C, {desc}"
+
+    except Exception as e:
+
+        return f"Weather Error: {e}"
+
 def execute_command(command):
 
     command = command.lower()
@@ -217,6 +258,27 @@ def execute_command(command):
         subprocess.Popen("cmd.exe")
 
         return "Opening Command Prompt"
+    
+    elif "weather" in command:
+
+        city = command.replace("weather", "").replace("in", "").strip()
+
+        if city == "":
+            city = "Karur"
+
+        return get_weather(city)
+    
+    elif "mute" == command:
+        return volume_control("mute")
+
+    elif "unmute" == command:
+        return volume_control("unmute")
+
+    elif "volume up" in command:
+        return volume_control("up")
+
+    elif "volume down" in command:
+        return volume_control("down")
 
     # VS Code
     elif "open vs code" in command or "open vscode" in command:
