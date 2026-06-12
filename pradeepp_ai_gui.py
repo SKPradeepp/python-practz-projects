@@ -121,6 +121,7 @@ def volume_control(action):
         pyautogui.press("volumemute")
         return "Unmuted"
     
+    
 def ask_ai(message):
 
     try:
@@ -279,6 +280,22 @@ def execute_command(command):
 
     elif "volume down" in command:
         return volume_control("down")
+    
+    elif "pause music" in command:
+        pyautogui.press("playpause")
+        return "Music paused"
+
+    elif "play music" in command:
+        pyautogui.press("playpause")
+        return "Music playing"
+
+    elif "next song" in command:
+        pyautogui.press("nexttrack")
+        return "Next song"
+
+    elif "previous song" in command:
+        pyautogui.press("prevtrack")
+        return "Previous song"
 
     # VS Code
     elif "open vs code" in command or "open vscode" in command:
@@ -366,16 +383,14 @@ def execute_command(command):
         return f"Searching Google for {query}"
 
     # YouTube Search
-    elif command.startswith("play "):
+    elif "open apple music" in command:
 
-        song = command.replace("play", "").strip()
-
-        webbrowser.open(
-            f"https://www.youtube.com/results?search_query={song}"
+        os.system(
+        r'explorer.exe shell:AppsFolder\AppleInc.AppleMusicWin_nzyj5cx40ttqa!App'
         )
 
-        return f"Playing {song}"
-
+        return "Opening Apple Music"
+    
     return None
 
 # =========================

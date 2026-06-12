@@ -210,3 +210,43 @@ If you want, I can also provide you with historical weather data for Karur or of
 [10-06-2026 18:50:13] Bot: Weather Error: name 'API_KEY' is not defined
 [10-06-2026 18:58:33] You: weather karur
 [10-06-2026 18:58:34] Bot: Weather Error: Invalid API key. Please see https://openweathermap.org/faq#error401 for more info.
+[12-06-2026 14:38:38] You: play a song
+[12-06-2026 14:38:38] Bot: Playing a song
+[12-06-2026 14:39:19] You: next song
+[12-06-2026 14:39:19] Bot: Next song
+[12-06-2026 14:39:39] You: play a anirudh song
+[12-06-2026 14:39:39] Bot: Playing a anirudh song
+[12-06-2026 14:41:01] You: play next song
+[12-06-2026 14:41:01] Bot: Next song
+[12-06-2026 14:47:51] You: play a song
+[12-06-2026 14:47:51] Bot: Playing a song
+[12-06-2026 14:48:14] You: full screen
+[12-06-2026 14:48:14] Bot: Full screen mode
+[12-06-2026 14:48:30] You: pause
+[12-06-2026 14:48:41] Bot: It looks like you'd like me to pause for a moment, right? Everything is still here when you're ready to continue. I'm all ears! What would you like to do next?
+[12-06-2026 14:49:11] You: pause music
+[12-06-2026 14:49:11] Bot: Music paused
+[12-06-2026 14:50:32] You: mute
+[12-06-2026 14:50:32] Bot: Muted
+[12-06-2026 14:50:42] You: unmute
+[12-06-2026 14:50:42] Bot: Unmuted
+[12-06-2026 15:28:52] You: open apple music
+[12-06-2026 15:28:53] Bot: Opening Apple Music
+[12-06-2026 15:29:37] You: pause music
+[12-06-2026 15:29:37] Bot: Music paused
+[12-06-2026 15:30:02] You: next song
+[12-06-2026 15:30:02] Bot: Next song
+[12-06-2026 15:30:23] You: play music
+[12-06-2026 15:30:23] Bot: Music playing
+[12-06-2026 15:30:33] You: previous song
+[12-06-2026 15:30:33] Bot: Previous song
+[12-06-2026 15:31:01] You: play song
+[12-06-2026 15:31:21] Bot: I'd be happy to play a song for you!
+
+Unfortunately, I'm a text-based AI and cannot directly play audio files. But I can suggest some options:
+
+1. **Recommend a song**: If you have a specific genre or mood in mind, I can recommend a popular song that fits your request.
+2. **Generate lyrics**: If you'd like to hear the lyrics of a specific song, I can provide them for you.
+3. **Create a playlist**: I can help you generate a playlist with a selection of songs based on your preferences.
+
+Which option sounds interesting to you?
