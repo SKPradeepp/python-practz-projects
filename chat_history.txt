@@ -250,3 +250,5 @@ Unfortunately, I'm a text-based AI and cannot directly play audio files. But I c
 3. **Create a playlist**: I can help you generate a playlist with a selection of songs based on your preferences.
 
 Which option sounds interesting to you?
+[13-06-2026 13:19:19] You: open camera
+[13-06-2026 13:19:20] Bot: Opening Camera

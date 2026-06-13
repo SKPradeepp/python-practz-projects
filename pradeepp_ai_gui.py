@@ -269,6 +269,12 @@ def execute_command(command):
 
         return get_weather(city)
     
+    elif "open camera" in command:
+
+        os.system("start microsoft.windows.camera:")
+
+        return "Opening Camera"
+    
     elif "mute" == command:
         return volume_control("mute")
 
