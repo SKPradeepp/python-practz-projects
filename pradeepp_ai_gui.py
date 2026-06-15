@@ -272,7 +272,6 @@ def execute_command(command):
     elif "open camera" in command:
 
         os.system("start microsoft.windows.camera:")
-
         return "Opening Camera"
     
     elif "mute" == command:
