@@ -9,6 +9,8 @@ direction = "RIGHT"
 font = pygame.font.SysFont(None, 35)
 snake_x = 300
 snake_y = 200
+snake_list = []
+snake_length = 1
 snake_size = 20
 food_x = random.randrange(0, 800, 20)
 food_y = random.randrange(0, 600, 20)
@@ -18,11 +20,12 @@ while running:
 
     screen.fill((0, 0, 0))
 
-    pygame.draw.rect(
+    for segment in snake_list:
+
+        pygame.draw.rect(
         screen,
         (0, 255, 0),
-        (snake_x, snake_y, snake_size, snake_size)
-    )
+        (segment[0], segment[1], snake_size, snake_size))
     pygame.draw.rect(
     screen,
     (255, 0, 0),
@@ -32,9 +35,6 @@ while running:
     pygame.display.update()
     
     for event in pygame.event.get():
-
-        if snake_x < 0 or snake_x > 780 or snake_y < 0 or snake_y > 580:
-            running = False
 
         if event.type == pygame.QUIT:
             running = False
@@ -60,21 +60,26 @@ while running:
 
     elif direction == "DOWN":
         snake_y += 20
-    screen.fill((0, 0, 0))
-
-    pygame.draw.rect(
-        screen,
-        (0, 255, 0),
-        (snake_x, snake_y, snake_size, snake_size)
-    )
+        
+    if snake_x < 0 or snake_x > 780 or snake_y < 0 or snake_y > 580:
+        running = False
 
     if snake_x == food_x and snake_y == food_y:
 
         food_x = random.randrange(0, 800, 20)
         food_y = random.randrange(0, 600, 20)
-    
         score += 1
+        snake_length += 1
         print("Food Eaten!")
+    
+    snake_head = []
+    snake_head.append(snake_x)
+    snake_head.append(snake_y)
+
+    snake_list.append(snake_head)
+
+    if len(snake_list) > snake_length:
+        del snake_list[0]
 
     score_text = font.render(
     f"Score: {score}",
