@@ -15,6 +15,7 @@ snake_size = 20
 food_x = random.randrange(0, 800, 20)
 food_y = random.randrange(0, 600, 20)
 running = True
+game_over = False
 clock = pygame.time.Clock()
 while running:
 
@@ -31,8 +32,26 @@ while running:
     (255, 0, 0),
     (food_x, food_y, 20, 20)
     )
+    if game_over:
+        for event in pygame.event.get():
 
-    pygame.display.update()
+            if event.type == pygame.QUIT:
+                running = False
+
+        screen.fill((0, 0, 0))
+
+        over_text = font.render(
+        f"GAME OVER! Score: {score}",
+        True,
+        (255, 0, 0)
+        )
+
+        screen.blit(over_text, (220, 280))
+
+        pygame.display.update()
+
+        continue
+
     
     for event in pygame.event.get():
 
@@ -62,7 +81,7 @@ while running:
         snake_y += 20
         
     if snake_x < 0 or snake_x > 780 or snake_y < 0 or snake_y > 580:
-        running = False
+        game_over = True
 
     if snake_x == food_x and snake_y == food_y:
 
@@ -80,7 +99,11 @@ while running:
 
     if len(snake_list) > snake_length:
         del snake_list[0]
+    for segment in snake_list[:-1]:
 
+        if segment == snake_head:
+
+            game_over = True
     score_text = font.render(
     f"Score: {score}",
     True,
