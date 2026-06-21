@@ -38,6 +38,19 @@ while running:
             if event.type == pygame.QUIT:
                 running = False
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    score = 0
+                    direction = "RIGHT"
+                    snake_x = 300
+                    snake_y = 200
+                    snake_list = []
+                    snake_length = 1
+                    food_x = random.randrange(0, 800, 20)
+                    food_y = random.randrange(0, 600, 20)
+                    snake_head = []
+                    game_over = False
+
         screen.fill((0, 0, 0))
 
         over_text = font.render(
@@ -46,7 +59,14 @@ while running:
         (255, 0, 0)
         )
 
-        screen.blit(over_text, (220, 280))
+        restart_text = font.render(
+        "Press R to Restart",
+        True,
+        (255, 255, 255)
+        )
+
+        screen.blit(over_text, (220, 260))
+        screen.blit(restart_text, (230, 310))
 
         pygame.display.update()
 
