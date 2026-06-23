@@ -1,7 +1,11 @@
 import pygame
 import random
 pygame.init()
-
+try:
+    with open("highscore.txt", "r") as f:
+        high_score = int(f.read())
+except:
+    high_score = 0
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Pradeepp Snake Game")
 score = 0
@@ -110,6 +114,8 @@ while running:
         score += 1
         snake_length += 1
         print("Food Eaten!")
+        if score > high_score:
+            high_score = score
     
     snake_head = []
     snake_head.append(snake_x)
@@ -130,7 +136,14 @@ while running:
     (255, 255, 255)
     )
     screen.blit(score_text, (10, 10))
-    
+    high_text = font.render(
+    f"High Score: {high_score}",
+    True,
+    (255, 255, 0)
+    )
+    screen.blit(high_text, (10, 40))
     pygame.display.update()
     clock.tick(8)
+with open("highscore.txt", "w") as f:
+    f.write(str(high_score))
 pygame.quit()
