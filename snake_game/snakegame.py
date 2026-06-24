@@ -143,7 +143,7 @@ while running:
     )
     screen.blit(high_text, (10, 40))
     pygame.display.update()
-    clock.tick(8)
+    clock.tick(8 + score // 2)
 with open("highscore.txt", "w") as f:
     f.write(str(high_score))
 pygame.quit()
