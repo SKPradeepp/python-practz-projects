@@ -1,6 +1,12 @@
 import pygame
 import random
 pygame.init()
+BLACK = (0, 0, 0)
+GREEN = (0, 200, 0)
+DARK_GREEN = (0, 120, 0)
+RED = (255, 50, 50)
+WHITE = (255, 255, 255)
+YELLOW = (255, 255, 0)
 try:
     with open("highscore.txt", "r") as f:
         high_score = int(f.read())
@@ -23,17 +29,17 @@ game_over = False
 clock = pygame.time.Clock()
 while running:
 
-    screen.fill((0, 0, 0))
+    screen.fill(BLACK)
 
     for segment in snake_list:
 
         pygame.draw.rect(
         screen,
-        (0, 255, 0),
+        GREEN,
         (segment[0], segment[1], snake_size, snake_size))
     pygame.draw.rect(
     screen,
-    (255, 0, 0),
+    RED,
     (food_x, food_y, 20, 20)
     )
     if game_over:
@@ -60,13 +66,13 @@ while running:
         over_text = font.render(
         f"GAME OVER! Score: {score}",
         True,
-        (255, 0, 0)
+        RED
         )
 
         restart_text = font.render(
         "Press R to Restart",
         True,
-        (255, 255, 255)
+        WHITE
         )
 
         screen.blit(over_text, (220, 260))
@@ -127,21 +133,39 @@ while running:
         del snake_list[0]
     for segment in snake_list[:-1]:
 
-        if segment == snake_head:
+        pygame.draw.rect(
+        screen,
+        DARK_GREEN,
+        (segment[0], segment[1], snake_size, snake_size)
+    )
 
-            game_over = True
+    if len(snake_list) > 0:
+
+        head = snake_list[-1]
+
+        pygame.draw.rect(
+        screen,
+        GREEN,
+        (head[0], head[1], snake_size, snake_size)
+    )
     score_text = font.render(
     f"Score: {score}",
     True,
-    (255, 255, 255)
+    BLACK
     )
     screen.blit(score_text, (10, 10))
     high_text = font.render(
     f"High Score: {high_score}",
     True,
-    (255, 255, 0)
+    YELLOW
     )
     screen.blit(high_text, (10, 40))
+    pygame.draw.rect(
+    screen,
+    WHITE,
+    (0, 0, 800, 600),
+    2
+    )
     pygame.display.update()
     clock.tick(8 + score // 2)
 with open("highscore.txt", "w") as f:
