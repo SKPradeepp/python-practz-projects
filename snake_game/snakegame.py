@@ -1,6 +1,9 @@
 import pygame
 import random
 pygame.init()
+pygame.mixer.init()
+eat_sound = pygame.mixer.Sound("snake_game/sounds/eat.wav")
+gameover_sound = pygame.mixer.Sound("snake_game/sounds/gameover.wav")
 BLACK = (0, 0, 0)
 GREEN = (0, 200, 0)
 DARK_GREEN = (0, 120, 0)
@@ -111,7 +114,19 @@ while running:
         snake_y += 20
         
     if snake_x < 0 or snake_x > 780 or snake_y < 0 or snake_y > 580:
+
+        if not game_over:
+            gameover_sound.play()
+
         game_over = True
+
+    for segment in snake_list[:-1]:
+
+        if segment == snake_head:
+
+            if not game_over:
+                gameover_sound.play()
+                game_over = True
 
     if snake_x == food_x and snake_y == food_y:
 
@@ -119,6 +134,7 @@ while running:
         food_y = random.randrange(0, 600, 20)
         score += 1
         snake_length += 1
+        eat_sound.play()
         print("Food Eaten!")
         if score > high_score:
             high_score = score
@@ -151,7 +167,7 @@ while running:
     score_text = font.render(
     f"Score: {score}",
     True,
-    BLACK
+    WHITE
     )
     screen.blit(score_text, (10, 10))
     high_text = font.render(
