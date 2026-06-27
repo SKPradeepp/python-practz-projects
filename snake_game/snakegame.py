@@ -29,8 +29,48 @@ food_x = random.randrange(0, 800, 20)
 food_y = random.randrange(0, 600, 20)
 running = True
 game_over = False
+game_started = False
 clock = pygame.time.Clock()
 while running:
+    if not game_started:
+
+        screen.fill(BLACK)
+
+        title = font.render(
+        "Pradeepp Snake Game",
+        True,
+        GREEN
+        )
+
+        start = font.render(
+        "Press SPACE to Start",
+        True,
+        WHITE
+        )
+
+        high = font.render(
+        f"High Score: {high_score}",
+        True,
+        YELLOW
+        )
+
+        screen.blit(title, (220, 180))
+        screen.blit(start, (230, 260))
+        screen.blit(high, (280, 330))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                running = False
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_SPACE:
+                   game_started = True
+
+        continue
 
     screen.fill(BLACK)
 
@@ -45,6 +85,7 @@ while running:
     RED,
     (food_x, food_y, 20, 20)
     )
+
     if game_over:
         for event in pygame.event.get():
 
@@ -61,8 +102,9 @@ while running:
                     snake_length = 1
                     food_x = random.randrange(0, 800, 20)
                     food_y = random.randrange(0, 600, 20)
-                    snake_head = []
+                    snake_head = [snake_x, snake_y]
                     game_over = False
+                    game_started = False
 
         screen.fill((0, 0, 0))
 
@@ -119,14 +161,19 @@ while running:
             gameover_sound.play()
 
         game_over = True
+    snake_head = [snake_x, snake_y]
 
+    snake_list.append(snake_head)
+
+    if len(snake_list) > snake_length:
+        del snake_list[0]
     for segment in snake_list[:-1]:
 
         if segment == snake_head:
 
             if not game_over:
                 gameover_sound.play()
-                game_over = True
+            game_over = True
 
     if snake_x == food_x and snake_y == food_y:
 
@@ -139,14 +186,6 @@ while running:
         if score > high_score:
             high_score = score
     
-    snake_head = []
-    snake_head.append(snake_x)
-    snake_head.append(snake_y)
-
-    snake_list.append(snake_head)
-
-    if len(snake_list) > snake_length:
-        del snake_list[0]
     for segment in snake_list[:-1]:
 
         pygame.draw.rect(
