@@ -2,6 +2,8 @@ import pygame
 import random
 pygame.init()
 pygame.mixer.init()
+pygame.mixer.music.load("snake_game/sounds/background.mp3")
+pygame.mixer.music.set_volume(0.3)
 eat_sound = pygame.mixer.Sound("snake_game/sounds/eat.wav")
 gameover_sound = pygame.mixer.Sound("snake_game/sounds/gameover.wav")
 BLACK = (0, 0, 0)
@@ -16,7 +18,7 @@ try:
 except:
     high_score = 0
 screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Pradeepp Snake Game")
+pygame.display.set_caption("Snake Game")
 score = 0
 direction = "RIGHT"
 font = pygame.font.SysFont(None, 35)
@@ -37,7 +39,7 @@ while running:
         screen.fill(BLACK)
 
         title = font.render(
-        "Pradeepp Snake Game",
+        "Snake Game",
         True,
         GREEN
         )
@@ -69,6 +71,7 @@ while running:
 
                 if event.key == pygame.K_SPACE:
                    game_started = True
+                   pygame.mixer.music.play(-1)
 
         continue
 
@@ -94,6 +97,7 @@ while running:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
+                    pygame.mixer.music.play(-1)
                     score = 0
                     direction = "RIGHT"
                     snake_x = 300
@@ -158,9 +162,10 @@ while running:
     if snake_x < 0 or snake_x > 780 or snake_y < 0 or snake_y > 580:
 
         if not game_over:
+            pygame.mixer.music.stop()
             gameover_sound.play()
-
         game_over = True
+
     snake_head = [snake_x, snake_y]
 
     snake_list.append(snake_head)
@@ -172,6 +177,7 @@ while running:
         if segment == snake_head:
 
             if not game_over:
+                pygame.mixer.music.stop()
                 gameover_sound.play()
             game_over = True
 
