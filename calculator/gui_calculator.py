@@ -27,7 +27,7 @@ root = Tk()
 
 root.title("Calculator")
 
-root.geometry("400x500")
+root.geometry("300x400")
 
 
 entry = Entry(root, width=20, font=("Arial", 20), borderwidth=5)
