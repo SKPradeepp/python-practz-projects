@@ -18,7 +18,7 @@ try:
 except:
     high_score = 0
 screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Snake Game")
+pygame.display.set_caption("🐍Snake Game")
 score = 0
 direction = "RIGHT"
 font = pygame.font.SysFont(None, 35)
@@ -32,34 +32,28 @@ food_y = random.randrange(0, 600, 20)
 running = True
 game_over = False
 game_started = False
+paused = False
 clock = pygame.time.Clock()
 while running:
     if not game_started:
 
         screen.fill(BLACK)
 
-        title = font.render(
-        "Snake Game",
-        True,
-        GREEN
-        )
+        title = font.render("🐍Snake Game", True, GREEN)
 
-        start = font.render(
-        "Press SPACE to Start",
-        True,
-        WHITE
-        )
+        start = font.render("SPACE - Start", True, WHITE)
 
-        high = font.render(
-        f"High Score: {high_score}",
-        True,
-        YELLOW
-        )
+        pause_info = font.render("P - Pause", True, WHITE)
 
-        screen.blit(title, (220, 180))
-        screen.blit(start, (230, 260))
-        screen.blit(high, (280, 330))
+        quit_info = font.render("ESC - Quit", True, WHITE)
 
+        high = font.render(f"High Score : {high_score}", True, YELLOW)
+
+        screen.blit(title, (190,150))
+        screen.blit(start, (280,220))
+        screen.blit(pause_info, (295,260))
+        screen.blit(quit_info, (285,300))
+        screen.blit(high, (255,360))
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -72,6 +66,10 @@ while running:
                 if event.key == pygame.K_SPACE:
                    game_started = True
                    pygame.mixer.music.play(-1)
+                if event.key == pygame.K_p:
+                    paused = not paused
+                if event.key == pygame.K_ESCAPE:
+                    running = False
 
         continue
 
@@ -83,11 +81,12 @@ while running:
         screen,
         GREEN,
         (segment[0], segment[1], snake_size, snake_size))
-    pygame.draw.rect(
+    pygame.draw.circle(
     screen,
     RED,
-    (food_x, food_y, 20, 20)
-    )
+    (food_x + 10, food_y + 10),
+    10
+)
 
     if game_over:
         for event in pygame.event.get():
@@ -109,23 +108,51 @@ while running:
                     snake_head = [snake_x, snake_y]
                     game_over = False
                     game_started = False
+                if event.key == pygame.K_ESCAPE:
+                    running = False
 
-        screen.fill((0, 0, 0))
-
+        screen.fill(BLACK)
+        pygame.draw.rect(
+    screen,
+    RED,
+    (150,150,500,300),
+    4
+)
         over_text = font.render(
-        f"GAME OVER! Score: {score}",
-        True,
-        RED
-        )
+    "GAME OVER",
+    True,
+    RED
+)
+
+        score_text = font.render(
+    f"Score : {score}",
+    True,
+    WHITE
+)
+
+        high_score_text = font.render(
+    f"High Score : {high_score}",
+    True,
+    YELLOW
+)
 
         restart_text = font.render(
-        "Press R to Restart",
-        True,
-        WHITE
-        )
+    "R - Restart",
+    True,
+    WHITE
+)
 
-        screen.blit(over_text, (220, 260))
-        screen.blit(restart_text, (230, 310))
+        quit_text = font.render(
+    "ESC - Quit",
+    True,
+    WHITE
+)
+
+        screen.blit(over_text, (250,180))
+        screen.blit(score_text, (270,240))
+        screen.blit(high_score_text, (240,280))
+        screen.blit(restart_text, (270,340))
+        screen.blit(quit_text, (270,380))
 
         pygame.display.update()
 
@@ -139,14 +166,49 @@ while running:
 
         if event.type == pygame.KEYDOWN:
 
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT and direction != "RIGHT":
                 direction = "LEFT"
-            elif event.key == pygame.K_RIGHT:
+
+            elif event.key == pygame.K_RIGHT and direction != "LEFT":
                 direction = "RIGHT"
-            elif event.key == pygame.K_UP:
+
+            elif event.key == pygame.K_UP and direction != "DOWN":
                 direction = "UP"
-            elif event.key == pygame.K_DOWN:
+
+            elif event.key == pygame.K_DOWN and direction != "UP":
                 direction = "DOWN"
+
+            if event.key == pygame.K_ESCAPE:
+                running = False
+            if event.key == pygame.K_p:
+                paused = not paused
+                if paused:
+                    pygame.mixer.music.pause()
+                else:
+                    pygame.mixer.music.unpause()
+    if paused:
+
+        screen.fill(BLACK)
+
+        pause_text = font.render(
+        "GAME PAUSED",
+        True,
+        YELLOW
+    )
+
+        resume_text = font.render(
+        "Press P to Resume",
+        True,
+        WHITE
+    )
+
+        screen.blit(pause_text, (250, 250))
+        screen.blit(resume_text, (220, 300))
+
+        pygame.display.update()
+        clock.tick(10)
+        continue
+
     if direction == "LEFT":
         snake_x -= 20
 
