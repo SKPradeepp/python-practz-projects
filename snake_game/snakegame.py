@@ -34,6 +34,33 @@ game_over = False
 game_started = False
 paused = False
 clock = pygame.time.Clock()
+def reset_game():
+    global score, direction
+    global snake_x, snake_y
+    global snake_list, snake_length
+    global food_x, food_y
+    global game_over, game_started
+    global paused
+
+    score = 0
+    direction = "RIGHT"
+
+    snake_x = 300
+    snake_y = 200
+
+    snake_list = []
+    snake_length = 1
+
+    while True:
+        food_x = random.randrange(0, 800, 20)
+        food_y = random.randrange(0, 600, 20)
+
+        if [food_x, food_y] not in snake_list:
+            break
+
+    game_over = False
+    game_started = False
+    paused = False
 while running:
     if not game_started:
 
@@ -97,17 +124,7 @@ while running:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     pygame.mixer.music.play(-1)
-                    score = 0
-                    direction = "RIGHT"
-                    snake_x = 300
-                    snake_y = 200
-                    snake_list = []
-                    snake_length = 1
-                    food_x = random.randrange(0, 800, 20)
-                    food_y = random.randrange(0, 600, 20)
-                    snake_head = [snake_x, snake_y]
-                    game_over = False
-                    game_started = False
+                    reset_game()
                 if event.key == pygame.K_ESCAPE:
                     running = False
 
@@ -190,6 +207,13 @@ while running:
 
         screen.fill(BLACK)
 
+        pygame.draw.rect(
+        screen,
+        YELLOW,
+        (170,180,460,180),
+        3
+    )
+
         pause_text = font.render(
         "GAME PAUSED",
         True,
@@ -245,8 +269,13 @@ while running:
 
     if snake_x == food_x and snake_y == food_y:
 
-        food_x = random.randrange(0, 800, 20)
-        food_y = random.randrange(0, 600, 20)
+        while True:
+
+            food_x = random.randrange(0, 800, 20)
+            food_y = random.randrange(0, 600, 20)
+
+            if [food_x, food_y] not in snake_list:
+                break
         score += 1
         snake_length += 1
         eat_sound.play()
@@ -271,14 +300,31 @@ while running:
         GREEN,
         (head[0], head[1], snake_size, snake_size)
     )
+    eye_radius = 2
+
+    if direction == "RIGHT":
+        pygame.draw.circle(screen, BLACK, (head[0] + 15, head[1] + 5), eye_radius)
+        pygame.draw.circle(screen, BLACK, (head[0] + 15, head[1] + 15), eye_radius)
+
+    elif direction == "LEFT":
+        pygame.draw.circle(screen, BLACK, (head[0] + 5, head[1] + 5), eye_radius)
+        pygame.draw.circle(screen, BLACK, (head[0] + 5, head[1] + 15), eye_radius)
+
+    elif direction == "UP":
+        pygame.draw.circle(screen, BLACK, (head[0] + 5, head[1] + 5), eye_radius)
+        pygame.draw.circle(screen, BLACK, (head[0] + 15, head[1] + 5), eye_radius)
+
+    elif direction == "DOWN":
+        pygame.draw.circle(screen, BLACK, (head[0] + 5, head[1] + 15), eye_radius)
+        pygame.draw.circle(screen, BLACK, (head[0] + 15, head[1] + 15), eye_radius)
     score_text = font.render(
-    f"Score: {score}",
+    f"Score : {score}",
     True,
     WHITE
     )
     screen.blit(score_text, (10, 10))
     high_text = font.render(
-    f"High Score: {high_score}",
+    f"High Score : {high_score}",
     True,
     YELLOW
     )
