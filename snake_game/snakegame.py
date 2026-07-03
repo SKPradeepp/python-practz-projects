@@ -6,19 +6,24 @@ pygame.mixer.music.load("snake_game/sounds/background.mp3")
 pygame.mixer.music.set_volume(0.3)
 eat_sound = pygame.mixer.Sound("snake_game/sounds/eat.wav")
 gameover_sound = pygame.mixer.Sound("snake_game/sounds/gameover.wav")
+apple = pygame.image.load("snake_game/images/apple.png")
+apple = pygame.transform.scale(apple, (20, 20))
 BLACK = (0, 0, 0)
 GREEN = (0, 200, 0)
 DARK_GREEN = (0, 120, 0)
 RED = (255, 50, 50)
 WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
+eat_flash = 0
 try:
     with open("highscore.txt", "r") as f:
         high_score = int(f.read())
 except:
     high_score = 0
 screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("🐍Snake Game")
+icon = pygame.image.load("snake_game/images/icon.png")
+pygame.display.set_icon(icon)
+pygame.display.set_caption("Snake Game")
 score = 0
 direction = "RIGHT"
 font = pygame.font.SysFont(None, 35)
@@ -61,12 +66,20 @@ def reset_game():
     game_over = False
     game_started = False
     paused = False
+
+def draw_grid():
+    for x in range(0, 800, 20):
+        pygame.draw.line(screen, (0, 45, 0), (x, 0), (x, 600))
+
+    for y in range(0, 600, 20):
+        pygame.draw.line(screen, (0, 45, 0), (0, y), (800, y))
+
 while running:
     if not game_started:
 
         screen.fill(BLACK)
 
-        title = font.render("🐍Snake Game", True, GREEN)
+        title = font.render("Snake Game", True, GREEN)
 
         start = font.render("SPACE - Start", True, WHITE)
 
@@ -101,6 +114,7 @@ while running:
         continue
 
     screen.fill(BLACK)
+    draw_grid()
 
     for segment in snake_list:
 
@@ -108,12 +122,15 @@ while running:
         screen,
         GREEN,
         (segment[0], segment[1], snake_size, snake_size))
-    pygame.draw.circle(
-    screen,
-    RED,
-    (food_x + 10, food_y + 10),
-    10
-)
+    if eat_flash > 0:
+        pygame.draw.circle(
+        screen,
+        YELLOW,
+        (food_x + 10, food_y + 10),
+        15
+        )
+        eat_flash -= 1
+    screen.blit(apple, (food_x, food_y))
 
     if game_over:
         for event in pygame.event.get():
@@ -204,9 +221,8 @@ while running:
                 else:
                     pygame.mixer.music.unpause()
     if paused:
-
         screen.fill(BLACK)
-
+        
         pygame.draw.rect(
         screen,
         YELLOW,
@@ -279,6 +295,7 @@ while running:
         score += 1
         snake_length += 1
         eat_sound.play()
+        eat_flash = 5
         print("Food Eaten!")
         if score > high_score:
             high_score = score
