@@ -1,19 +1,19 @@
 import pygame
 import random
 import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+import sys
+if getattr(sys, "frozen", False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 pygame.init()
 pygame.mouse.set_visible(False)
 pygame.mixer.init()
 pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.load(os.path.join(BASE_DIR, "sounds", "background.mp3"))
-
 eat_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "sounds", "eat.wav"))
-
 gameover_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "sounds", "gameover.wav"))
-
 apple = pygame.image.load(os.path.join(BASE_DIR, "images", "apple.png"))
-
 icon = pygame.image.load(os.path.join(BASE_DIR, "images", "icon.png"))
 apple = pygame.transform.scale(apple, (20, 20))
 BLACK = (0, 0, 0)
