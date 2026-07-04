@@ -1,6 +1,7 @@
 import pygame
 import random
 pygame.init()
+pygame.mouse.set_visible(False)
 pygame.mixer.init()
 pygame.mixer.music.load("snake_game/sounds/background.mp3")
 pygame.mixer.music.set_volume(0.3)
@@ -69,10 +70,10 @@ def reset_game():
 
 def draw_grid():
     for x in range(0, 800, 20):
-        pygame.draw.line(screen, (0, 45, 0), (x, 0), (x, 600))
+        pygame.draw.line(screen, (0, 35, 0), (x, 0), (x, 600))
 
     for y in range(0, 600, 20):
-        pygame.draw.line(screen, (0, 45, 0), (0, y), (800, y))
+        pygame.draw.line(screen, (0, 35, 0), (0, y), (800, y))
 
 while running:
     if not game_started:
@@ -356,4 +357,5 @@ while running:
     clock.tick(8 + score // 2)
 with open("highscore.txt", "w") as f:
     f.write(str(high_score))
+pygame.mouse.set_visible(True)
 pygame.quit()
