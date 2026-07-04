@@ -1,13 +1,20 @@
 import pygame
 import random
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 pygame.init()
 pygame.mouse.set_visible(False)
 pygame.mixer.init()
-pygame.mixer.music.load("snake_game/sounds/background.mp3")
 pygame.mixer.music.set_volume(0.3)
-eat_sound = pygame.mixer.Sound("snake_game/sounds/eat.wav")
-gameover_sound = pygame.mixer.Sound("snake_game/sounds/gameover.wav")
-apple = pygame.image.load("snake_game/images/apple.png")
+pygame.mixer.music.load(os.path.join(BASE_DIR, "sounds", "background.mp3"))
+
+eat_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "sounds", "eat.wav"))
+
+gameover_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "sounds", "gameover.wav"))
+
+apple = pygame.image.load(os.path.join(BASE_DIR, "images", "apple.png"))
+
+icon = pygame.image.load(os.path.join(BASE_DIR, "images", "icon.png"))
 apple = pygame.transform.scale(apple, (20, 20))
 BLACK = (0, 0, 0)
 GREEN = (0, 200, 0)
@@ -17,12 +24,11 @@ WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
 eat_flash = 0
 try:
-    with open("highscore.txt", "r") as f:
+    with open(os.path.join(BASE_DIR, "highscore.txt"), "r") as f:
         high_score = int(f.read())
 except:
     high_score = 0
 screen = pygame.display.set_mode((800, 600))
-icon = pygame.image.load("snake_game/images/icon.png")
 pygame.display.set_icon(icon)
 pygame.display.set_caption("Snake Game")
 score = 0
@@ -355,7 +361,7 @@ while running:
     )
     pygame.display.update()
     clock.tick(8 + score // 2)
-with open("highscore.txt", "w") as f:
+with open(os.path.join(BASE_DIR, "highscore.txt"), "w") as f:
     f.write(str(high_score))
 pygame.mouse.set_visible(True)
 pygame.quit()
