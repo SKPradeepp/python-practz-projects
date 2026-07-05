@@ -1,0 +1,5 @@
+# Colors & fonts
+
+PRIMARY = "#4CAF50"
+BACKGROUND = "#1E1E1E"
+TEXT = "#FFFFFF"
