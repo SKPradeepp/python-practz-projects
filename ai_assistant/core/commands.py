@@ -1,16 +1,18 @@
-# All command functions
+import subprocess
+import datetime
+
 
 def open_notepad():
-    pass
+    subprocess.Popen("notepad.exe")
+
 
 def open_calculator():
-    pass
+    subprocess.Popen("calc.exe")
 
-def open_browser():
-    pass
 
-def tell_time():
-    pass
+def get_time():
+    return datetime.datetime.now().strftime("%I:%M %p")
 
-def tell_date():
-    pass
+
+def get_date():
+    return datetime.datetime.now().strftime("%d %B %Y")

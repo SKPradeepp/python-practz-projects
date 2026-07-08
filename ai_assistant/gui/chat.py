@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import scrolledtext
-
+from core.assistant import process_command
 
 def create_chat(root):
 
@@ -58,17 +58,7 @@ def create_chat(root):
 
         msg = message.lower()
 
-        if msg == "hello":
-            reply = "Hello Pradeepp! 👋"
-
-        elif msg == "how are you":
-            reply = "I'm doing great! 😄"
-
-        elif msg == "bye":
-            reply = "See you later! 👋"
-
-        else:
-            reply = "Sorry, I don't understand that yet."
+        reply = process_command(msg)
 
         chat_box.insert(tk.END, f"🤖 Aura:\n{reply}\n\n")
 
