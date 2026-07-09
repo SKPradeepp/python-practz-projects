@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import scrolledtext
 from core.assistant import process_command
-
+from core.voice import speak, listen
+import threading
 def create_chat(root):
 
     main = tk.Frame(root, bg="#1E1E1E")
@@ -44,7 +45,29 @@ def create_chat(root):
     entry.pack(side="left", fill="x", expand=True, padx=(0, 10))
 
     # ---------------- Send Function ---------------- #
+    def voice_message():
 
+        chat_box.config(state="normal")
+        chat_box.insert(tk.END, "🎤 Listening...\n")
+        chat_box.config(state="disabled")
+        chat_box.yview(tk.END)
+
+        command = listen()
+
+        if command is None:
+            return
+
+        chat_box.config(state="normal")
+        chat_box.insert(tk.END, f"🧑 You:\n{command}\n\n")
+
+        reply = process_command(command)
+
+        chat_box.insert(tk.END, f"🤖 Aura:\n{reply}\n\n")
+
+        chat_box.config(state="disabled")
+        chat_box.yview(tk.END)
+
+        speak(reply)
     def send_message(event=None):
 
         message = entry.get().strip()
@@ -59,6 +82,7 @@ def create_chat(root):
         msg = message.lower()
 
         reply = process_command(msg)
+        threading.Thread(target=speak, args=(reply,), daemon=True).start()
 
         chat_box.insert(tk.END, f"🤖 Aura:\n{reply}\n\n")
 
@@ -69,7 +93,20 @@ def create_chat(root):
         entry.delete(0, tk.END)
 
     # ---------------- Send Button ---------------- #
+    mic = tk.Button(
+        bottom,
+        text="🎤",
+        bg="#2E2E2E",
+        fg="white",
+        relief="flat",
+        bd=0,
+        font=("Segoe UI", 12),
+        width=4,
+        cursor="hand2",
+        command=lambda: threading.Thread(target=voice_message, daemon=True).start()
+    )
 
+    mic.pack(side="right", padx=(0, 10))
     send = tk.Button(
         bottom,
         text="➤ Send",

@@ -3,8 +3,11 @@ from core.commands import *
 
 def process_command(command):
 
-    command = command.lower()
-
+    command = command.lower().strip()
+    command = command.replace(".", "")
+    command = command.replace(",", "")
+    command = command.replace("!", "")
+    command = command.replace("?", "")
     if "open notepad" in command:
         open_notepad()
         return "Opening Notepad..."
@@ -19,10 +22,10 @@ def process_command(command):
     elif "date" in command:
         return f"Today's date is {get_date()}."
 
-    elif command == "hello":
+    elif "hello" in command or "hi" in command:
         return "Hello Pradeepp! 👋"
 
-    elif "how are you" in command:
+    elif "howareyou" in command:
         return "I'm doing great! 😄"
 
     elif "bye" in command:
