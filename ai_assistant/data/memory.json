@@ -1,3 +1,6 @@
-MY college is SRM
-favorite color is Orange
-what do you ?
+{
+    "my college": "SRM",
+    "favorite color": "Orange",
+    "what do you ?": "I am an AI assistant.",
+    "favorite language": "Python"
+}

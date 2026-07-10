@@ -1,5 +1,5 @@
 from core.commands import *
-
+from core.memory import remember, recall
 
 def process_command(command):
 
@@ -30,5 +30,31 @@ def process_command(command):
 
     elif "bye" in command:
         return "See you later! 👋"
+    
+    elif "remember" in command:
+
+        text = command.replace("remember", "").strip()
+
+        if " is " in text:
+
+            key, value = text.split(" is ", 1)
+
+            remember(key.strip(), value.strip())
+
+            return "Okay! I'll remember that."
+
+        return "Tell me what to remember."
+
+    elif "what is my" in command:
+
+        key = command.replace("what is my", "").strip()
+
+        value = recall(key)
+
+        if value:
+
+            return f"Your {key} is {value}."
+
+        return "I don't know that yet."
 
     return "Sorry, I don't understand that yet."
