@@ -1,6 +1,6 @@
 from core.commands import *
 from core.memory import remember, recall
-
+from core.notes import save_note, read_notes
 def process_command(command):
 
     command = command.lower().strip()
@@ -56,5 +56,28 @@ def process_command(command):
             return f"Your {key} is {value}."
 
         return "I don't know that yet."
+    elif "take note" in command:
+
+        note = command.replace("take note", "").strip()
+
+        if note:
+            save_note(note)
+            return "Note saved successfully."
+
+        return "What should I write?"
+
+    elif "show notes" in command:
+
+        notes = read_notes()
+
+        if len(notes) == 0:
+            return "You don't have any notes."
+
+        text = "📝 Your Notes\n\n"
+
+        for i, note in enumerate(notes, 1):
+            text += f"{i}. {note}"
+
+        return text
 
     return "Sorry, I don't understand that yet."
