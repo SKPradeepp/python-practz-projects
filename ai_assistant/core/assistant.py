@@ -79,5 +79,36 @@ def process_command(command):
             text += f"{i}. {note}"
 
         return text
+    elif "youtube" in command:
+
+        open_youtube()
+
+        return "Opening YouTube..."
+    elif "github" in command:
+
+        open_github()
+
+        return "Opening GitHub..."
+    elif "google" in command:
+
+        open_google()
+
+        return "Opening Google..."
+    elif "chatgpt" in command:
+
+        open_chatgpt()
+
+        return "Opening ChatGPT...(web version)"
+    elif command.startswith("search"):
+
+        query = command.replace("search", "").strip()
+
+        if query:
+
+            search_google(query)
+
+            return f"Searching Google for {query}"
+
+        return "What should I search?"
 
     return "Sorry, I don't understand that yet."
