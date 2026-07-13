@@ -1,6 +1,7 @@
 from core.commands import *
 from core.memory import remember, recall
 from core.notes import save_note, read_notes
+from core.system_utils import take_screenshot, open_screenshot_folder
 def process_command(command):
 
     command = command.lower().strip()
@@ -110,5 +111,16 @@ def process_command(command):
             return f"Searching Google for {query}"
 
         return "What should I search?"
+    elif "take screenshot" in command:
+
+        path = take_screenshot()
+
+        return f"Screenshot saved successfully.\n{path}"
+
+    elif "open screenshots" in command:
+
+        open_screenshot_folder()
+
+        return "Opening screenshots folder..."
 
     return "Sorry, I don't understand that yet."
