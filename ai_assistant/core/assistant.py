@@ -2,9 +2,10 @@ from core.commands import *
 from core.memory import remember, recall
 from core.notes import save_note, read_notes
 from core.system_utils import take_screenshot, open_screenshot_folder
+from core.file_search import find_file
 def process_command(command):
-
     command = command.lower().strip()
+    og_command = command
     command = command.replace(".", "")
     command = command.replace(",", "")
     command = command.replace("!", "")
@@ -26,7 +27,7 @@ def process_command(command):
     elif "hello" in command or "hi" in command:
         return "Hello Pradeepp! 👋"
 
-    elif "howareyou" in command:
+    elif "how are you" in command:
         return "I'm doing great! 😄"
 
     elif "bye" in command:
@@ -122,5 +123,20 @@ def process_command(command):
         open_screenshot_folder()
 
         return "Opening screenshots folder..."
+
+    elif og_command.startswith("find file"):
+
+        filename = og_command.replace("find file", "").strip()
+
+        if filename:
+
+            path = find_file(filename, "C:\\Users\\Pradeepp")
+
+            if path:
+                return f"Found!\n{path}"
+
+            return "Sorry, I couldn't find that file."
+
+        return "Which file should I search for?"
 
     return "Sorry, I don't understand that yet."
