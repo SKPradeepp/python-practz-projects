@@ -1,4 +1,5 @@
 from core.commands import *
+from core.ai_chat import ask_ai
 from core.memory import remember, recall
 from core.notes import save_note, read_notes
 from core.system_utils import take_screenshot, open_screenshot_folder

@@ -1,8 +1,11 @@
 import tkinter as tk
 from tkinter import scrolledtext
+from datetime import datetime
 from core.assistant import process_command
 from core.voice import speak, listen
 import threading
+def current_time():
+    return datetime.now().strftime("%H:%M")
 def create_chat(root):
 
     main = tk.Frame(root, bg="#1E1E1E")
@@ -25,6 +28,8 @@ def create_chat(root):
     chat_box.insert(tk.END, "🤖 Aura:\n")
     chat_box.insert(tk.END, "Hello Pradeepp! 👋\n")
     chat_box.insert(tk.END, "How can I help you today?\n\n")
+    chat_box.see(tk.END)
+
 
     chat_box.config(state="disabled")
 
@@ -32,7 +37,16 @@ def create_chat(root):
 
     bottom = tk.Frame(main, bg="#1E1E1E")
     bottom.pack(fill="x", padx=15, pady=15)
+    status = tk.Label(
+    main,
+    text="🟢 Ready",
+    bg="#1E1E1E",
+    fg="#AAAAAA",
+    anchor="w",
+    font=("Segoe UI", 9)
+    )
 
+    status.pack(fill="x", padx=15, pady=(0, 5))
     entry = tk.Entry(
         bottom,
         bg="#2A2A2A",
@@ -48,7 +62,10 @@ def create_chat(root):
     def voice_message():
 
         chat_box.config(state="normal")
+        status.config(text="🎤 Listening...")
         chat_box.insert(tk.END, "🎤 Listening...\n")
+        chat_box.see(tk.END)
+
         chat_box.config(state="disabled")
         chat_box.yview(tk.END)
 
@@ -58,16 +75,19 @@ def create_chat(root):
             return
 
         chat_box.config(state="normal")
-        chat_box.insert(tk.END, f"🧑 You:\n{command}\n\n")
-
+        chat_box.insert(tk.END,f"[{current_time()}] 🧑 You: {command}\n")
+        chat_box.see(tk.END)
+        status.config(text="🤔 Thinking...")
         reply = process_command(command)
 
-        chat_box.insert(tk.END, f"🤖 Aura:\n{reply}\n\n")
+        chat_box.insert(tk.END, f"[{current_time()}] 🤖 Aura: {reply}\n\n")
+        chat_box.see(tk.END)
 
         chat_box.config(state="disabled")
         chat_box.yview(tk.END)
-
+        status.config(text="🔊 Speaking...")
         speak(reply)
+        status.config(text="🟢 Ready")
     def send_message(event=None):
 
         message = entry.get().strip()
@@ -77,14 +97,16 @@ def create_chat(root):
 
         chat_box.config(state="normal")
 
-        chat_box.insert(tk.END, f"🧑 You:\n{message}\n\n")
+        chat_box.insert(tk.END, f"[{current_time()}] 🧑 You: {message}\n")
+        chat_box.see(tk.END)
 
         msg = message.lower()
-
+        status.config(text="🤔 Thinking...")
         reply = process_command(msg)
         threading.Thread(target=speak, args=(reply,), daemon=True).start()
-
-        chat_box.insert(tk.END, f"🤖 Aura:\n{reply}\n\n")
+        status.config(text="🟢 Ready")
+        chat_box.insert(tk.END, f"[{current_time()}] 🤖 Aura: {reply}\n\n")
+        chat_box.see(tk.END)
 
         chat_box.config(state="disabled")
 
@@ -124,4 +146,4 @@ def create_chat(root):
 
     send.pack(side="right")
 
-    entry.bind("<Return>", send_message)
+    entry.bind("<Return>", lambda event: send_message())
