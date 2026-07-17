@@ -55,45 +55,44 @@ def add_message(canvas, chat_frame, text, sender="bot"):
         chat_frame,
         bg="#252526"
     )
+    label = tk.Label(
+    container,
+    text="You" if sender == "user" else "Aura",
+    bg="#252526",
+    fg="#AAAAAA",
+    font=("Segoe UI", 8, "bold")
+    )
+
+    container.pack(fill="x", padx=12, pady=7)
+
+    label.pack(anchor="w")
 
     if sender == "user":
-        container.pack(fill="x", padx=12, pady=4, anchor="e")
-    else:
-        container.pack(fill="x", padx=12, pady=4, anchor="w")
-
-    if sender == "user":
-
         bubble = tk.Label(
-            container,
-            text=text,
-            bg="#0078D7",
-            fg="white",
-            wraplength=420,
-            justify="left",
-            padx=12,
-            pady=8,
-            font=("Segoe UI", 11)
-        )
-
-        bubble.pack(side="right", anchor="e")
-
+        container,
+        text=text,
+        bg="#0078D7",
+        fg="white",
+        wraplength=420,
+        justify="left",
+        padx=12,
+        pady=8,
+        font=("Segoe UI", 11)
+    )
     else:
-
         bubble = tk.Label(
-            container,
-            text=text,
-            bg="#3A3A3A",
-            fg="white",
-            wraplength=420,
-            justify="left",
-            padx=12,
-            pady=8,
-            font=("Segoe UI", 11)
-        )
+        container,
+        text=text,
+        bg="#3A3A3A",
+        fg="white",
+        wraplength=420,
+        justify="left",
+        padx=12,
+        pady=8,
+        font=("Segoe UI", 11)
+    )
 
-        bubble.pack(
-            anchor="w"
-        )
+    bubble.pack(anchor="w")
 
     canvas.update_idletasks()
 

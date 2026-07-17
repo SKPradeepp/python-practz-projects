@@ -50,7 +50,39 @@ def create_chat(root):
         font=("Segoe UI", 12)
     )
     entry.pack(side="left", fill="x", expand=True, padx=(0, 10))
+    entry.insert(0, "Type a message...")
+    entry.config(fg="gray")
     # ---------------- Send Function ---------------- #
+    def clear_placeholder(event):
+
+        if entry.get() == "Type a message...":
+            entry.delete(0, tk.END)
+            entry.config(fg="white")
+    def restore_placeholder(event):
+
+        if entry.get() == "":
+            entry.insert(0, "Type a message...")
+            entry.config(fg="gray")
+    def clear_chat():
+
+        for widget in chat_frame.winfo_children():
+            widget.destroy()
+
+        add_message(
+        canvas,
+        chat_frame,
+        "Hello Pradeepp! 👋",
+        "bot"
+    )
+
+        add_message(
+        canvas,
+        chat_frame,
+        "How can I help you today?",
+        "bot"
+    )
+
+        status.config(text="🟢 Ready")
     def voice_message():
 
         status.config(text="🎤 Listening...")
@@ -82,7 +114,7 @@ def create_chat(root):
 
         message = entry.get().strip()
 
-        if message == "":
+        if message == "" or message == "Type a message...":
             return
 
         add_message(
@@ -105,6 +137,7 @@ def create_chat(root):
         )
 
         entry.delete(0, tk.END)
+        restore_placeholder(None)
 
     # ---------------- Send Button ---------------- #
     mic = tk.Button(
@@ -121,6 +154,20 @@ def create_chat(root):
     )
 
     mic.pack(side="right", padx=(0, 10))
+    clear = tk.Button(
+    bottom,
+    text="🗑",
+    bg="#2E2E2E",
+    fg="white",
+    relief="flat",
+    bd=0,
+    font=("Segoe UI", 12),
+    width=4,
+    cursor="hand2",
+    command=clear_chat
+)
+
+    clear.pack(side="right", padx=(0, 10))
     send = tk.Button(
         bottom,
         text="➤ Send",
@@ -135,7 +182,8 @@ def create_chat(root):
         cursor="hand2",
         command=send_message
     )
-
     send.pack(side="right")
-
     entry.bind("<Return>", lambda event: send_message())
+    entry.bind("<FocusIn>", clear_placeholder)
+    entry.bind("<FocusOut>", restore_placeholder)
+    root.after(100, lambda: root.focus_set())
