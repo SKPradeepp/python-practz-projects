@@ -4,6 +4,7 @@ from core.memory import remember, recall
 from core.notes import save_note, read_notes
 from core.system_utils import take_screenshot, open_screenshot_folder
 from core.file_search import find_file
+from core.app_launcher import launch_app
 def process_command(command):
     command = command.lower().strip()
     og_command = command
@@ -11,13 +12,9 @@ def process_command(command):
     command = command.replace(",", "")
     command = command.replace("!", "")
     command = command.replace("?", "")
-    if "open notepad" in command:
-        open_notepad()
-        return "Opening Notepad..."
-
-    elif "open calculator" in command:
-        open_calculator()
-        return "Opening Calculator..."
+    if command.startswith("open "):
+        app = command.replace("open", "").strip()
+        return launch_app(app)
 
     elif "time" in command:
         return f"The current time is {get_time()}."
