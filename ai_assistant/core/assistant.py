@@ -5,6 +5,7 @@ from core.notes import save_note, read_notes
 from core.system_utils import take_screenshot, open_screenshot_folder
 from core.file_search import find_file
 from core.app_launcher import launch_app
+from core.web_launcher import open_website
 def process_command(command):
     command = command.lower().strip()
     og_command = command
@@ -12,9 +13,35 @@ def process_command(command):
     command = command.replace(",", "")
     command = command.replace("!", "")
     command = command.replace("?", "")
-    if command.startswith("open "):
-        app = command.replace("open", "").strip()
-        return launch_app(app)
+    if any(word in command for word in ["open", "launch", "start"]):
+
+        target = command
+
+        remove_words = [
+        "please",
+        "can",
+        "could",
+        "you",
+        "me",
+        "open",
+        "launch",
+        "start"
+    ]
+
+        for word in remove_words:
+            target = target.replace(word, "")
+
+        target = " ".join(target.split())
+
+        if open_website(target):
+            return f"Opening {target.title()}..."
+
+        app = launch_app(target)
+
+        if app:
+            return app
+
+        return "Sorry, I don't know that application or website."
 
     elif "time" in command:
         return f"The current time is {get_time()}."
@@ -79,26 +106,7 @@ def process_command(command):
             text += f"{i}. {note}"
 
         return text
-    elif "youtube" in command:
-
-        open_youtube()
-
-        return "Opening YouTube..."
-    elif "github" in command:
-
-        open_github()
-
-        return "Opening GitHub..."
-    elif "google" in command:
-
-        open_google()
-
-        return "Opening Google..."
-    elif "chatgpt" in command:
-
-        open_chatgpt()
-
-        return "Opening ChatGPT...(web version)"
+    
     elif command.startswith("search"):
 
         query = command.replace("search", "").strip()
